@@ -1,0 +1,53 @@
+{
+  "name": "keyswap",
+  "version": "1.0.0",
+  "description": "Keyboard-layout text converter. Type in the wrong layout — Twirler twists it back.",
+  "type": "module",
+  "main": "./index.js",
+  "exports": {
+    ".": "./index.js",
+    "./package.json": "./package.json"
+  },
+  "types": "./index.d.ts",
+  "sideEffects": false,
+  "keywords": [
+    "keyboard",
+    "layout",
+    "convert",
+    "transliterate",
+    "twirler",
+    "i18n",
+    "input",
+    "typing",
+    "cyrillic",
+    "latin"
+  ],
+  "license": "MIT",
+  "author": "Andrey Brilenko <postfunction@gmail.com>",
+  "homepage": "https://github.com/pandemozhno/keyswap",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pandemozhno/keyswap.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pandemozhno/keyswap/issues"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "lib/",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=14"
+  },
+  "scripts": {
+    "test": "node --test test/",
+    "lint": "eslint .",
+    "prepublishOnly": "npm test"
+  },
+  "devDependencies": {},
+  "peerDependencies": {},
+  "peerDependenciesMeta": {}
+}
