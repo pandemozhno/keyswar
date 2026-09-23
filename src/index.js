@@ -204,7 +204,7 @@ function isBundle(json, locale) {
 }
 
 // ─── Main class ───
-export default class KeySwap {
+export default class KeysWar {
   #layouts = new Map();     // locale → { base, shift, length }
   #order   = [];            // registration order of locales (matters for next())
   #pending = [];            // array of promises from add() — awaited via ready()/then
@@ -270,25 +270,25 @@ export default class KeySwap {
   // Await loading of all add() calls. Returns a promise.
   ready() { return Promise.all(this.#pending); }
 
-  /** keyswap.swap("ghbdtn").to("ru") — entry point for a single conversion */
-  swap(text) { return new SwapChain(text, this); }
+  /** keyswar.strike("ghbdtn").to("ru") — entry point for a single conversion */
+  strike(text) { return new Mission(text, this); }
 
-  // Mini-API for SwapChain (private fields are not accessible from outside).
+  // Mini-API for Mission (private fields are not accessible from outside).
   _get(l)  { return this.#layouts.get(norm(l)); }
   _has(l)  { return this.#layouts.has(norm(l)); }
   _order() { return [...this.#order]; }
   _wait()  { return Promise.all(this.#pending); }
 }
 
-// ─── Chain for a single conversion ───
-class SwapChain {
-  #text; #keyswap;
+// ─── Mission: the chain for a single conversion ───
+class Mission {
+  #text; #keyswar;
   #from = null; #to = null;   // explicitly specified locales
   #mode = 'auto';             // 'auto' | 'to' | 'next'
 
-  constructor(text, keyswap) {
+  constructor(text, keyswar) {
     this.#text = String(text);
-    this.#keyswap = keyswap;
+    this.#keyswar = keyswar;
   }
 
   // Specify the source locale manually.
@@ -302,18 +302,18 @@ class SwapChain {
 
   // Main logic. Returns a promise with a string.
   // Implementing then()/catch()/finally() makes the object "thenable",
-  // so you can write: await keyswap.swap("ghbdtn").to("ru")
-  async #compute() {
-    await this.#keyswap._wait();               // await all add()
-    const order = this.#keyswap._order();
+  // so you can write: await keyswar.strike("ghbdtn").to("ru")
+  async #execute() {
+    await this.#keyswar._wait();               // await all add()
+    const order = this.#keyswar._order();
     if (!order.length) throw new Error('No layouts registered');
 
     // Source: explicit from, or auto-detect by the first "speaking" character.
     let from = this.#from ?? langByChar(this.#text);
     if (!from) throw new Error('Could not detect source language');
     // If detection yielded an unregistered locale — fall back to 'en' if present.
-    if (!this.#keyswap._has(from)) {
-      if (this.#keyswap._has('en')) from = 'en';
+    if (!this.#keyswar._has(from)) {
+      if (this.#keyswar._has('en')) from = 'en';
       else throw new Error(`No layout registered for "${from}"`);
     }
 
@@ -324,15 +324,15 @@ class SwapChain {
       if (i === -1) throw new Error(`"${from}" is not registered`);
       to = order[(i + 1) % order.length];
     }
-    if (!this.#keyswap._has(to)) throw new Error(`No layout registered for "${to}"`);
+    if (!this.#keyswar._has(to)) throw new Error(`No layout registered for "${to}"`);
 
-    return convert(this.#text, this.#keyswap._get(from), this.#keyswap._get(to));
+    return convert(this.#text, this.#keyswar._get(from), this.#keyswar._get(to));
   }
 
-  // Implement a Promise-like interface so SwapChain can be awaited.
-  then(ok, err) { return this.#compute().then(ok, err); }
-  catch(err)    { return this.#compute().catch(err); }
-  finally(fn)   { return this.#compute().finally(fn); }
+  // Implement a Promise-like interface so Mission can be awaited.
+  then(ok, err) { return this.#execute().then(ok, err); }
+  catch(err)    { return this.#execute().catch(err); }
+  finally(fn)   { return this.#execute().finally(fn); }
 }
 
 // ─── Actual conversion by indices ───
