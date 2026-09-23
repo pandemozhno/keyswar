@@ -1,5 +1,5 @@
 {
-  "name": "keyswar",
+  "name": "keyswarly",
   "version": "1.0.0",
   "description": "Keyboard-layout text converter. Type in the wrong layout — Twirler twists it back.",
   "type": "module",
@@ -24,13 +24,13 @@
   ],
   "license": "MIT",
   "author": "Andrey Brilenko <postfunction@gmail.com>",
-  "homepage": "https://github.com/pandemozhno/keyswar",
+  "homepage": "https://github.com/pandemozhno/keyswarly",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/pandemozhno/keyswar.git"
+    "url": "git+https://github.com/pandemozhno/keyswarly.git"
   },
   "bugs": {
-    "url": "https://github.com/pandemozhno/keyswar/issues"
+    "url": "https://github.com/pandemozhno/keyswarly/issues"
   },
   "files": [
     "index.js",

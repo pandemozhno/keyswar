@@ -204,7 +204,7 @@ function isBundle(json, locale) {
 }
 
 // ─── Main class ───
-export default class KeysWar {
+export default class Keyswarly {
   #layouts = new Map();     // locale → { base, shift, length }
   #order   = [];            // registration order of locales (matters for next())
   #pending = [];            // array of promises from add() — awaited via ready()/then
@@ -270,7 +270,7 @@ export default class KeysWar {
   // Await loading of all add() calls. Returns a promise.
   ready() { return Promise.all(this.#pending); }
 
-  /** keyswar.strike("ghbdtn").to("ru") — entry point for a single conversion */
+  /** keyswarly.strike("ghbdtn").to("ru") — entry point for a single conversion */
   strike(text) { return new Mission(text, this); }
 
   // Mini-API for Mission (private fields are not accessible from outside).
@@ -282,13 +282,13 @@ export default class KeysWar {
 
 // ─── Mission: the chain for a single conversion ───
 class Mission {
-  #text; #keyswar;
+  #text; #keyswarly;
   #from = null; #to = null;   // explicitly specified locales
   #mode = 'auto';             // 'auto' | 'to' | 'next'
 
-  constructor(text, keyswar) {
+  constructor(text, keyswarly) {
     this.#text = String(text);
-    this.#keyswar = keyswar;
+    this.#keyswarly = keyswarly;
   }
 
   // Specify the source locale manually.
@@ -302,18 +302,18 @@ class Mission {
 
   // Main logic. Returns a promise with a string.
   // Implementing then()/catch()/finally() makes the object "thenable",
-  // so you can write: await keyswar.strike("ghbdtn").to("ru")
+  // so you can write: await keyswarly.strike("ghbdtn").to("ru")
   async #execute() {
-    await this.#keyswar._wait();               // await all add()
-    const order = this.#keyswar._order();
+    await this.#keyswarly._wait();               // await all add()
+    const order = this.#keyswarly._order();
     if (!order.length) throw new Error('No layouts registered');
 
     // Source: explicit from, or auto-detect by the first "speaking" character.
     let from = this.#from ?? langByChar(this.#text);
     if (!from) throw new Error('Could not detect source language');
     // If detection yielded an unregistered locale — fall back to 'en' if present.
-    if (!this.#keyswar._has(from)) {
-      if (this.#keyswar._has('en')) from = 'en';
+    if (!this.#keyswarly._has(from)) {
+      if (this.#keyswarly._has('en')) from = 'en';
       else throw new Error(`No layout registered for "${from}"`);
     }
 
@@ -324,9 +324,9 @@ class Mission {
       if (i === -1) throw new Error(`"${from}" is not registered`);
       to = order[(i + 1) % order.length];
     }
-    if (!this.#keyswar._has(to)) throw new Error(`No layout registered for "${to}"`);
+    if (!this.#keyswarly._has(to)) throw new Error(`No layout registered for "${to}"`);
 
-    return convert(this.#text, this.#keyswar._get(from), this.#keyswar._get(to));
+    return convert(this.#text, this.#keyswarly._get(from), this.#keyswarly._get(to));
   }
 
   // Implement a Promise-like interface so Mission can be awaited.

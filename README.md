@@ -1,6 +1,6 @@
-# KeysWar
+# keyswarly
 
-Fix text typed in the wrong keyboard layout. If you meant to type `привет` but your keyboard was in English and you got `ghbdtn`, KeysWar strikes back — and the other way around.
+Fix text typed in the wrong keyboard layout. If you meant to type `привет` but your keyboard was in English and you got `ghbdtn`, keyswarly strikes back — and the other way around.
 
 The library maps characters by their **physical key index**: it finds each character of the source layout in `base` or `shift`, then takes the character at the same index in the target layout. Unknown characters (spaces, punctuation, emoji) pass through unchanged.
 
@@ -15,15 +15,15 @@ Source language is detected automatically from Unicode script, with per-language
 ## Installation
 
 ```bash
-npm install keyswar
+npm install keyswarly
 ```
 
-Or just drop `keyswar.js` into your project and import it — there are no runtime dependencies.
+Or just drop `keyswarly.js` into your project and import it — there are no runtime dependencies.
 
 ```js
-import KeysWar from 'keyswar';
+import Keyswarly from 'keyswarly';
 // or, from a local file:
-import KeysWar from './keyswar.js';
+import Keyswarly from './keyswarly.js';
 ```
 
 ---
@@ -33,9 +33,9 @@ import KeysWar from './keyswar.js';
 Create an instance once, then register one or more layouts. All layouts **must use the same physical key order** (same string length for `base`, and same length for `shift`), otherwise `add()` throws.
 
 ```js
-import KeysWar from './keyswar.js';
+import Keyswarly from './keyswarly.js';
 
-const war = new KeysWar();
+const warly = new Keyswarly();
 ```
 
 ### 1. From a URL to a bundle of layouts
@@ -43,7 +43,7 @@ const war = new KeysWar();
 A bundle is a JSON object whose keys are locale codes and whose values are layouts.
 
 ```js
-war.add('https://example.com/layouts/all.json');
+warly.add('https://example.com/layouts/all.json');
 // all.json:
 // {
 //   "ru": "йцукенгшщзхъфывапролджэячсмитьбю.|ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,",
@@ -54,19 +54,19 @@ war.add('https://example.com/layouts/all.json');
 ### 2. From a URL to a single layout, locale inferred from the filename
 
 ```js
-war.add('/layouts/ru.json');   // locale "ru" is parsed from "ru.json"
+warly.add('/layouts/ru.json');   // locale "ru" is parsed from "ru.json"
 ```
 
 ### 3. From a URL to a single layout, locale passed explicitly
 
 ```js
-war.add('/layouts/ru.json', 'ru');
+warly.add('/layouts/ru.json', 'ru');
 ```
 
 ### 4. From an inline object as a bundle
 
 ```js
-war.add({
+warly.add({
   ru: 'йцукенгшщзхъфывапролджэячсмитьбю.|ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,',
   en: 'qwertyuiop[]asdfghjkl;\'zxcvbnm,./|QWERTYUIOP{}ASDFGHJKL:"ZXCVBNM<>?'
 });
@@ -75,28 +75,28 @@ war.add({
 ### 5. From an inline string, with `|` separating base and shift
 
 ```js
-war.add('йцукенгшщзхъфывапролджэячсмитьбю.|ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,', 'ru');
+warly.add('йцукенгшщзхъфывапролджэячсмитьбю.|ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,', 'ru');
 ```
 
 ### 6. From an inline string, without `|` — shift is derived via `toUpperCase()`
 
 ```js
-war.add('qwertyuiopasdfghjklzxcvbnm', 'en');
+warly.add('qwertyuiopasdfghjklzxcvbnm', 'en');
 ```
 
 ### 7. From an inline array `[base, shift]`
 
 ```js
-war.add(['йцукенгшщзхъфывапролджэячсмитьбю.', 'ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,'], 'ru');
+warly.add(['йцукенгшщзхъфывапролджэячсмитьбю.', 'ЙЦУКЕНГШЩЗХЪФЫВАПРОЛДЖЭЯЧСМИТЬБЮ,'], 'ru');
 // shift is optional:
-war.add(['qwertyuiopasdfghjklzxcvbnm'], 'en');
+warly.add(['qwertyuiopasdfghjklzxcvbnm'], 'en');
 ```
 
 ### 8. From an inline object `{ base, shift }` (or `{ lower, upper }`)
 
 ```js
-war.add({ base: 'йцукен...', shift: 'ЙЦУКЕН...' }, 'ru');
-war.add({ lower: 'qwerty...', upper: 'QWERTY...' }, 'en');
+warly.add({ base: 'йцукен...', shift: 'ЙЦУКЕН...' }, 'ru');
+warly.add({ lower: 'qwerty...', upper: 'QWERTY...' }, 'en');
 ```
 
 ### 9. Chaining several layouts
@@ -104,9 +104,9 @@ war.add({ lower: 'qwerty...', upper: 'QWERTY...' }, 'en');
 `add()` returns `this`, so you can chain:
 
 ```js
-war.add('/layouts/ru.json')
-   .add('/layouts/en.json')
-   .add('/layouts/de.json');
+warly.add('/layouts/ru.json')
+     .add('/layouts/en.json')
+     .add('/layouts/de.json');
 ```
 
 ### Awaiting load
@@ -114,9 +114,9 @@ war.add('/layouts/ru.json')
 Loading is deferred. Await `ready()` before doing conversions, or just `await` the strike itself (it waits internally):
 
 ```js
-await war.ready();
+await warly.ready();
 // or rely on the chain:
-await war.strike('ghbdtn').to('ru');
+await warly.strike('ghbdtn').to('ru');
 ```
 
 ---
@@ -128,44 +128,44 @@ The entry point is `strike(text)`, returning a `Mission` with `.from()`, `.to()`
 ### 1. Explicit target locale (most common)
 
 ```js
-await war.strike('ghbdtn').to('ru');   // 'привет'
+await warly.strike('ghbdtn').to('ru');   // 'привет'
 ```
 
 ### 2. Auto-detected source, explicit target
 
 ```js
-await war.strike('привет').to('en');   // 'ghbdtn'
+await warly.strike('привет').to('en');   // 'ghbdtn'
 ```
 
 ### 3. Auto-detected source, next registered layout as target
 
 ```js
 // If layouts were registered in order ru → en, this swaps ru → en.
-await war.strike('привет').next();     // 'ghbdtn'
+await warly.strike('привет').next();     // 'ghbdtn'
 ```
 
 ### 4. Explicit source and target
 
 ```js
-await war.strike('ghbdtn').from('en').to('ru');   // 'привет'
+await warly.strike('ghbdtn').from('en').to('ru');   // 'привет'
 ```
 
 ### 5. Auto mode (detect source, pick next layout)
 
 ```js
-await war.strike('ghbdtn').auto();     // detect en, use next layout
+await warly.strike('ghbdtn').auto();     // detect en, use next layout
 ```
 
 ### 6. Set the target first, source later
 
 ```js
-await war.strike('ghbdtn').to('ru').from('en');   // same as above
+await warly.strike('ghbdtn').to('ru').from('en');   // same as above
 ```
 
 ### 7. Reuse the mission for several strings
 
 ```js
-const m = war.strike('ghbdtn').to('ru');
+const m = warly.strike('ghbdtn').to('ru');
 await m;             // first call
 // Note: a mission computes on every await; call .strike() again if you need a fresh one.
 ```
@@ -175,35 +175,35 @@ await m;             // first call
 Unknown characters are passed through unchanged:
 
 ```js
-await war.strike('ghbdtn, world!').to('ru');    // 'привет, world!'
-await war.strike('ghbdtn 🙂').to('ru');          // 'привет 🙂'
+await warly.strike('ghbdtn, world!').to('ru');    // 'привет, world!'
+await warly.strike('ghbdtn 🙂').to('ru');          // 'привет 🙂'
 ```
 
 ### 9. Uppercase and shifted characters are handled
 
 ```js
-await war.strike('GHBDTN').to('ru');            // 'ПРИВЕТ'
-await war.strike('Ghbdtn').to('ru');            // 'Привет'
+await warly.strike('GHBDTN').to('ru');            // 'ПРИВЕТ'
+await warly.strike('Ghbdtn').to('ru');            // 'Привет'
 ```
 
 ### 10. Non-awaiting use (promise style)
 
 ```js
-war.strike('ghbdtn').to('ru').then(s => console.log(s));   // 'привет'
-war.strike('ghbdtn').to('ru').catch(console.error);
-war.strike('ghbdtn').to('ru').finally(() => console.log('done'));
+warly.strike('ghbdtn').to('ru').then(s => console.log(s));   // 'привет'
+warly.strike('ghbdtn').to('ru').catch(console.error);
+warly.strike('ghbdtn').to('ru').finally(() => console.log('done'));
 ```
 
 ### 11. Full example
 
 ```js
-import KeysWar from './keyswar.js';
+import Keyswarly from 'keyswarly';
 
-const war = new KeysWar();
-war.add('/layouts/ru.json').add('/layouts/en.json');
-await war.ready();
+const warly = new Keyswarly();
+warly.add('/layouts/ru.json').add('/layouts/en.json');
+await warly.ready();
 
-const fixed = await war.strike('ghbdtn').to('ru');
+const fixed = await warly.strike('ghbdtn').to('ru');
 console.log(fixed);   // 'привет'
 ```
 
@@ -211,7 +211,7 @@ console.log(fixed);   // 'привет'
 
 ## API summary
 
-### `new KeysWar()`
+### `new Keyswarly()`
 
 Creates an instance.
 
@@ -253,4 +253,4 @@ Locale codes are normalized: lowercase, and everything after the first `-` or `_
 - **Script ≠ language.** Detection is heuristic. Cyrillic defaults to `ru`, Latin to `en`, Arabic to `ar`. Languages with distinguishing letters (Ukrainian, Belarusian, Serbian, German, Spanish, …) are detected by those letters.
 - **Layouts must be index-aligned.** All registered layouts must share the same physical key order. Mixing a 33-key Russian layout with a 26-key Latin one is fine *only if* the string lengths match (they usually don't — pad to the same length or pick layouts designed for the same keyboard).
 - **`|` is a hard separator.** If your layout itself contains `|` (Shift + `\` on the Russian layout), pass it as an array or object instead of a `|`-joined string.
-- For robust multilingual detection, pair KeysWar with a real detector such as `franc` or `cld3`.
+- For robust multilingual detection, pair keyswarly with a real detector such as `franc` or `cld3`.
